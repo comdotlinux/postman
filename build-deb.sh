@@ -14,7 +14,7 @@ version="${versionMaj}.${versionMin}.${versionRev}"
 
 echo "Postman V${version}"
 
-curl -i --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version}
+curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version}
 if [ $? -eq 0 ] ; then
 	echo "Release v${version}" exists. Not running.
 	exit 0
