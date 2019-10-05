@@ -28,7 +28,7 @@ if [ -d "${packageName}" ]; then
 	rm -rf "${packageName}/"
 fi
 
-echo "Downloading the tarball."
+echo "Downloading the tarball ${postmanTarball} "
 
 curl -s -L -C- https://dl.pstmn.io/download/latest/linux64 -o ${postmanTarball}
 
