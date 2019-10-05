@@ -100,6 +100,8 @@ tee release_body.json << END
 }
 END
 
-curl -i -XPOST --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases
+curl -i -XPOST --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases -o /tmp/release
 
-curl -i -XPOST -H 'Content-Type: application/vnd.debian.binary-package' --data @"${packageName}.deb" https://api.github.com/repos/comdotlinux/postman/releases/1/assets?name="${packageName}.deb"
+release_id=$( basename $(grep Location: /tmp/release | awk '{print $2}') )
+
+curl -i -XPOST -H 'Content-Type: application/vnd.debian.binary-package' --data @"${packageName}.deb" https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name="${packageName}.deb"
