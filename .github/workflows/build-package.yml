@@ -1,0 +1,15 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Get latest version of postman
+      run: curl --head -s "https://dl.pstmn.io/download/latest/linux64" | grep -o "Postman.*.gz"
+    - name: Run a multi-line script
+      run: chmod u+x ./build-deb.sh && ./build-deb.sh
