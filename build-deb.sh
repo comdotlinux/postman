@@ -6,9 +6,6 @@ if [ -d "Postman" ]; then
 fi
 
 postmanTarball=$(curl --head -s "https://dl.pstmn.io/download/latest/linux64" | grep -o "Postman.*.gz")
-curl -s -L -C- https://dl.pstmn.io/download/latest/linux64 -o ${postmanTarball}
-echo "Extracting Postman tarball ${postmanTarball}"
-tar -xf ${postmanTarball} || ( echo "Failed to extract Postman tarball" && exit )
 
 versionMaj=$(echo ${postmanTarball} | awk -F '-' '{ print $4 }' | awk -F '.' '{ print $1 }')
 versionMin=$(echo ${postmanTarball} | awk -F '-' '{ print $4 }' | awk -F '.' '{ print $2 }')
@@ -16,6 +13,13 @@ versionRev=$(echo ${postmanTarball} | awk -F '-' '{ print $4 }' | awk -F '.' '{ 
 version="${versionMaj}.${versionMin}.${versionRev}"
 
 echo "Postman V${version}"
+
+curl -i --fail -L -H 'Authorization: token 98c4eeac14aaccd23182e90445ed8de2160ca227' https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version}
+if [ $? -eq 0 ] ; then
+	echo "Release v${version}" exists. Not running.
+	exit 0
+fi
+
 packageName="postman-${version}"
 echo "${version}" > ./version.txt
 
@@ -23,6 +27,13 @@ if [ -d "${packageName}" ]; then
 	echo "Removing old '${packageName}/'"
 	rm -rf "${packageName}/"
 fi
+
+echo "Downloading the tarball."
+
+curl -s -L -C- https://dl.pstmn.io/download/latest/linux64 -o ${postmanTarball}
+
+echo "Extracting Postman tarball ${postmanTarball}"
+tar -xf ${postmanTarball} || ( echo "Failed to extract Postman tarball" && exit )
 
 echo "Creating ${packageName} folder structure and files"
 mkdir -pv "${packageName}"
@@ -88,8 +99,6 @@ if [ $? -gt 0 ]; then
 	exit
 fi
 
-version=$(echo ${postmanTarball} | awk -NF- '{print $4}' | awk -NF. '{printf "%s.%s.%s",$1,$2,$3}')
-
 tee release_body.json << END
 {
   "tag_name": "v${version}",
@@ -101,12 +110,14 @@ tee release_body.json << END
 }
 END
 
-curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases 2>&1 | tee /tmp/release
-
+curl --fail -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases 2>&1 | tee /tmp/release
+[ $? -ne 0 ] && echo "Failed to create release" && exit 1
 location=$(grep Location: /tmp/release | awk '{print $2}')
 echo "Release : ${location}"
 
 release_id=$(basename ${location})
 echo "Release ID : ${release_id}"
 
-curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/vnd.debian.binary-package' --data @${debName} https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${debName}
+[ -z release_id ] && echo "Failed to get release id" && exit 3
+curl --fail -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/octet-stream' --data @${debName} https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${debName}
+[ $? -ne 0 ] && echo "Failed to create release asset" && exit 4
