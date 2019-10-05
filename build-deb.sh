@@ -79,11 +79,12 @@ echo "Setting modes"
 chmod 0775 "${packageName}/DEBIAN/postinst"
 chmod 0775 "${packageName}/DEBIAN/prerm"
 
-echo "Building '${packageName}.deb'"
+debName="${packageName}.deb"
+echo "Building '${debName}'"
 dpkg-deb -b "${packageName}" > /dev/null
 
 if [ $? -gt 0 ]; then
-	echo "Failed to build '${packageName}.deb'"
+	echo "Failed to build '${debName}'"
 	exit
 fi
 
@@ -108,4 +109,4 @@ echo "Release : ${location}"
 release_id=$(basename ${location})
 echo "Release ID : ${release_id}"
 
-curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/vnd.debian.binary-package' --data @${packageName}.deb https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb
+curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/vnd.debian.binary-package' --data @${debName} https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${debName}
