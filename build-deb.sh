@@ -39,7 +39,7 @@ cp "Postman/app/resources/app/assets/icon.png" "${packageName}/usr/share/icons/h
 cp -R "Postman/"* "${packageName}/opt/postman/"
 
 echo "Creating desktop file"
-echo > ${packageName}/usr/share/applications/Postman.desktop << END
+tee ${packageName}/usr/share/applications/Postman.desktop << END
 [Desktop Entry]
 Type=Application
 Name=Postman
@@ -50,7 +50,7 @@ Path=/opt/postman
 Categories=Development;
 END
 
-echo > ${packageName}/DEBIAN/control << END
+tee ${packageName}/DEBIAN/control << END
 Package: Postman
 Version: ${version}
 Section: devel
@@ -62,18 +62,18 @@ Description: Postman
 API something
 END
 
-echo > ${packageName}/DEBIAN/postinst << END
-	if [ -f /usr/bin/postman ]; then
-		sudo rm -f /usr/bin/postman
-	fi
-	sudo ln -s /opt/postman/Postman /usr/bin/postman
+tee ${packageName}/DEBIAN/postinst << END
+if [ -f /usr/bin/postman ]; then
+	sudo rm -f /usr/bin/postman
+fi
+sudo ln -s /opt/postman/Postman /usr/bin/postman
 END
 
 
-echo > ${packageName}/DEBIAN/prerm << END
-	if [ -f /usr/bin/postman ]; then
-		sudo rm -f /usr/bin/postman
-	fi
+tee ${packageName}/DEBIAN/prerm << END
+if [ -f /usr/bin/postman ]; then
+	sudo rm -f /usr/bin/postman
+fi
 END
 
 
