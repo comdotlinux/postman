@@ -121,7 +121,7 @@ echo "Release ID : ${release_id}"
 
 [ -z release_id ] && echo "Failed to get release id" && exit 3
 cp ${packageName}.deb /tmp/postman.deb
-curl -i -L -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/zip' --data @/tmp/postman.deb "https://uploads.github.com/repos/comdotlinux/postman/releases/$release_id/assets?name=${packageName}.deb"
+curl -i -L -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/zip' --data @/tmp/postman.deb "https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb"
 
 curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version} -o /dev/null
 if [ $? -ne 0 ] ; then
