@@ -120,7 +120,7 @@ release_id=$(basename ${location})
 echo "Release ID : ${release_id}"
 
 [ -z release_id ] && echo "Failed to get release id" && exit 3
-curl -i -L -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/octet-stream' --data @$packageName.deb https://uploads.github.com/repos/comdotlinux/postman/releases/$release_id/assets?name=$packageName.deb
+curl -i -L -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/zip' --data @$packageName.deb https://uploads.github.com/repos/comdotlinux/postman/releases/$release_id/assets?name=$packageName.deb
 
 curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version}
 if [ $? -ne 0 ] ; then
