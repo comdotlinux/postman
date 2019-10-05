@@ -56,10 +56,8 @@ Version: ${version}
 Section: devel
 Priority: optional
 Architecture: amd64
-Depends:
 Maintainer: You
-Description: Postman
-API something
+Description: Postman API something
 END
 
 tee ${packageName}/DEBIAN/postinst << END
