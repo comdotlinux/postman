@@ -112,7 +112,7 @@ tee release_body.json << END
 }
 END
 
-curl -i -L -XPOST -H ${GITHUB_TOKEN} --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases 2>&1 | tee /tmp/release
+curl -i -L -XPOST -H "Authorization: token ${GITHUB_TOKEN}" --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases 2>&1 | tee /tmp/release
 location=$(grep Location: /tmp/release | awk '{print $2}')
 echo "Release : ${location}"
 
@@ -124,7 +124,7 @@ cp -v ${packageName}.deb /tmp/postman.deb
 uploadUrl="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb"
 
 echo "Upload Url is : ${uploadUrl}"
-curl -i -L -XPOST -H ${GITHUB_TOKEN} -H 'Content-Type: application/zip' --data @/tmp/postman.deb "${uploadUrl}"
+curl -i -L -XPOST -H -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/zip' --data @/tmp/postman.deb ${uploadUrl}
 
 curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version} -o /dev/null
 if [ $? -ne 0 ] ; then
