@@ -91,13 +91,13 @@ chmod 0775 "${packageName}/DEBIAN/postinst"
 chmod 0775 "${packageName}/DEBIAN/prerm"
 
 debName="${packageName}.deb"
-echo "Building '${debName}'"
+echo "Building '${packageName}.deb'"
 dpkg-deb -b "${packageName}" > /dev/null
 
 ls -ltra
 
 if [ $? -gt 0 ]; then
-	echo "Failed to build '${debName}'"
+	echo "Failed to build '${packageName}.deb'"
 	exit
 fi
 
@@ -112,7 +112,7 @@ tee release_body.json << END
 }
 END
 
-curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases 2>&1 | tee /tmp/release
+curl -i -L -XPOST -H "Authorization: token ${GITHUB_TOKEN}" --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases 2>&1 | tee /tmp/release
 location=$(grep Location: /tmp/release | awk '{print $2}')
 echo "Release : ${location}"
 
@@ -120,4 +120,10 @@ release_id=$(basename ${location})
 echo "Release ID : ${release_id}"
 
 [ -z release_id ] && echo "Failed to get release id" && exit 3
-curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/octet-stream' --data @"${debName}" https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${debName}
+curl -i -L -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/octet-stream' --data @${packageName}.deb https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb
+
+curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version}
+if [ $? -ne 0 ] ; then
+	echo "Release v${version}" could not be created. So Job Failed
+	exit 5
+fi
