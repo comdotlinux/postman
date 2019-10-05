@@ -100,8 +100,12 @@ tee release_body.json << END
 }
 END
 
-curl -i -XPOST --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases -o /tmp/release
+curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases 2>&1 | tee /tmp/release
 
-release_id=$( basename $(grep Location: /tmp/release | awk '{print $2}') )
+location=$(grep Location: /tmp/release | awk '{print $2}')
+echo "Release : ${location}"
 
-curl -i -XPOST -H 'Content-Type: application/vnd.debian.binary-package' --data @"${packageName}.deb" https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name="${packageName}.deb"
+release_id=$(basename ${location})
+echo "Release ID : ${release_id}"
+
+curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/vnd.debian.binary-package' --data @"${packageName}.deb" https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name="${packageName}.deb"
