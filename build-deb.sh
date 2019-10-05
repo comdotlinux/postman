@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if [ -d "Postman" ]; then
 	echo "Removing old 'Postman/'"
@@ -93,6 +93,8 @@ chmod 0775 "${packageName}/DEBIAN/prerm"
 debName="${packageName}.deb"
 echo "Building '${debName}'"
 dpkg-deb -b "${packageName}" > /dev/null
+
+ls -ltra
 
 if [ $? -gt 0 ]; then
 	echo "Failed to build '${debName}'"
