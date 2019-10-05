@@ -1,6 +1,13 @@
-name: CI
+name: PostmanPackage
 
-on: [push]
+on: push
+
+on:
+    schedule:
+      # Every Sunday
+      - cron '0 0 * * 0'
+
+
 
 jobs:
   build:
