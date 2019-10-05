@@ -108,4 +108,4 @@ echo "Release : ${location}"
 release_id=$(basename ${location})
 echo "Release ID : ${release_id}"
 
-curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/vnd.debian.binary-package' --data @"${packageName}.deb" https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name="${packageName}.deb"
+curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/vnd.debian.binary-package' --data @${packageName}.deb https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb
