@@ -14,7 +14,7 @@ version="${versionMaj}.${versionMin}.${versionRev}"
 
 echo "Postman V${version}"
 
-curl -i --fail -L -H 'Authorization: token 98c4eeac14aaccd23182e90445ed8de2160ca227' https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version}
+curl -i --fail -L -H "Authorization: token ${GITHUB_TOKEN}"  https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version}
 if [ $? -eq 0 ] ; then
 	echo "Release v${version}" exists. Not running.
 	exit 0
