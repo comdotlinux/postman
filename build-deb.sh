@@ -6,8 +6,8 @@ if [ -d "Postman" ]; then
 fi
 
 postmanTarball=$(curl --head -s "https://dl.pstmn.io/download/latest/linux64" | grep -o "Postman.*.gz")
-curl -L -C- https://dl.pstmn.io/download/latest/linux64 -o ${postmanTarball}
-echo "Extracting Postman tarball"
+curl -s -L -C- https://dl.pstmn.io/download/latest/linux64 -o ${postmanTarball}
+echo "Extracting Postman tarball ${postmanTarball}"
 tar -xf ${postmanTarball} || ( echo "Failed to extract Postman tarball" && exit )
 
 versionMaj=$(echo ${postmanTarball} | awk -F '-' '{ print $4 }' | awk -F '.' '{ print $1 }')
@@ -86,3 +86,20 @@ if [ $? -gt 0 ]; then
 	echo "Failed to build '${packageName}.deb'"
 	exit
 fi
+
+version=$(echo ${postmanTarball} | awk -NF- '{print $4}' | awk -NF. '{printf "%s.%s.%s",$1,$2,$3}')
+
+tee release_body.json << END
+{
+  "tag_name": "v${version}",
+  "target_commitish": "master",
+  "name": "v${version}",
+  "body": "Postman Debian Package for x86_64 Linux built on Ubuntu",
+  "draft": false,
+  "prerelease": false
+}
+END
+
+curl --post --data @release_body.json https://github.com/repos/comdotlinux/postman/releases
+
+curl --post --data @"${packageName}.deb" https://github.com/repos/comdotlinux/postman/releases/1/assets?name="${packageName}.deb"
