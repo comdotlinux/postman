@@ -1,13 +1,10 @@
 name: PostmanPackage
 
-on: push
-
 on:
-    schedule:
-      # Every Sunday
-      - cron '0 0 * * 0'
+  push:
 
-
+  schedule:
+    - cron '0 0 * * 0'
 
 jobs:
   build:
