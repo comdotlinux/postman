@@ -112,8 +112,7 @@ tee release_body.json << END
 }
 END
 
-curl --fail -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases 2>&1 | tee /tmp/release
-[ $? -ne 0 ] && echo "Failed to create release" && exit 1
+curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases 2>&1 | tee /tmp/release
 location=$(grep Location: /tmp/release | awk '{print $2}')
 echo "Release : ${location}"
 
@@ -121,5 +120,4 @@ release_id=$(basename ${location})
 echo "Release ID : ${release_id}"
 
 [ -z release_id ] && echo "Failed to get release id" && exit 3
-curl --fail -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/octet-stream' --data @${debName} https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${debName}
-[ $? -ne 0 ] && echo "Failed to create release asset" && exit 4
+curl -i -XPOST -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/octet-stream' --data @"${debName}" https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${debName}
