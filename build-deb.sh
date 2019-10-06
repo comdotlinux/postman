@@ -117,7 +117,7 @@ location=$(grep Location: /tmp/release | awk '{print $2}')
 echo "Release : ${location}"
 
 release_id=$(basename ${location})
-release_id=$(echo ${release_id} | awk '{$1=$1};1')
+release_id=${release_id//[$'\t\r\n ']}
 echo "Release ID : ${release_id}"
 
 [ -z release_id ] && echo "Failed to get release id" && exit 3
