@@ -46,8 +46,8 @@ mkdir -pv "${packageName}/DEBIAN"
 touch "${packageName}/DEBIAN/control" "${packageName}/DEBIAN/postinst" "${packageName}/DEBIAN/prerm"
 
 echo "Copying files"
-cp "Postman/app/resources/app/assets/icon.png" "${packageName}/usr/share/icons/hicolor/128x128/apps/postman.png"
-cp -R "Postman/"* "${packageName}/opt/postman/"
+cp -v "Postman/app/resources/app/assets/icon.png" "${packageName}/usr/share/icons/hicolor/128x128/apps/postman.png"
+cp -Rv "Postman/"* "${packageName}/opt/postman/"
 
 echo "Creating desktop file"
 tee ${packageName}/usr/share/applications/Postman.desktop << END
@@ -73,15 +73,15 @@ END
 
 tee ${packageName}/DEBIAN/postinst << END
 if [ -f /usr/bin/postman ]; then
-	sudo rm -f /usr/bin/postman
+	sudo rm -fv /usr/bin/postman
 fi
-sudo ln -s /opt/postman/Postman /usr/bin/postman
+sudo ln -sv /opt/postman/Postman /usr/bin/postman
 END
 
 
 tee ${packageName}/DEBIAN/prerm << END
 if [ -f /usr/bin/postman ]; then
-	sudo rm -f /usr/bin/postman
+	sudo rm -fv /usr/bin/postman
 fi
 END
 
