@@ -1,7 +1,7 @@
 name: PostmanPackage
 
 on:
-  push:
+#  push:
   schedule:
     # Every Sunday
     - cron:  '0 0 * * 0'
