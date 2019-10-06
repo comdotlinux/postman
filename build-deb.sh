@@ -122,11 +122,11 @@ echo "Release ID : ${release_id}"
 
 [ -z release_id ] && echo "Failed to get release id" && exit 3
 echo "--"
-cp -v ${packageName}.deb /tmp/postman.deb
-uploadUrl="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb"
+zip ${packageName}.deb.zip ${packageName}.deb
+uploadUrl="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb.zip&label=ZippedDebFile"
 
 echo "Upload Url is : ${uploadUrl}"
-curl -i -L -H "Authorization: token ${GITHUB_TOKEN}" --data @/tmp/postman.deb ${uploadUrl}
+curl -i -L -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/zip' --data @${packageName}.deb.zip ${uploadUrl}
 
 echo "--"
 curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version} -o /dev/null
