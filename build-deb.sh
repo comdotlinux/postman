@@ -116,16 +116,18 @@ curl -i -L -XPOST -H "Authorization: token ${GITHUB_TOKEN}" --data @release_body
 location=$(grep Location: /tmp/release | awk '{print $2}')
 echo "Release : ${location}"
 
-release_id=$(basename ${location})
+release_id=$(basename ${location} | awk '{$1=$1};1')
 echo "Release ID : ${release_id}"
 
 [ -z release_id ] && echo "Failed to get release id" && exit 3
+echo "--"
 cp -v ${packageName}.deb /tmp/postman.deb
 uploadUrl="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb"
 
 echo "Upload Url is : ${uploadUrl}"
 curl -i -v -L -XPOST -H -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/octet-stream' --data @/tmp/postman.deb ${uploadUrl}
 
+echo "--"
 curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version} -o /dev/null
 if [ $? -ne 0 ] ; then
 	echo "Release v${version}" could not be created. So Job Failed
