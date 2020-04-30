@@ -11,8 +11,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-#    - name: Get latest version of postman
-#      run: curl --head -s "https://dl.pstmn.io/download/latest/linux64" | grep -o "Postman.*.gz"
+    - name: Get latest version of postman
+      run: curl --head -s "https://dl.pstmn.io/download/latest/linux64" | grep -o "Postman.*.gz"
     - name: Build the package
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
