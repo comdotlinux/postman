@@ -11,14 +11,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Get latest version of postman
-      run: curl --head -s "https://dl.pstmn.io/download/latest/linux64" | grep -o "Postman.*.gz"
     - name: Build the package
+      run: chmod u+x ./build-deb.sh && ./build-deb.sh
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-      run: chmod u+x ./build-deb.sh && ./build-deb.sh
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v1
       with:
-        name: ${{ env.PACKAGE_DIR }}
-        path: ${{ env.PACKAGE_DIR }}
+        tag_name: ${{ env.PACKAGE_VERSION }}
+        release_name: Release ${{ github.ref }}
+        body: "Details : ${{ env.RELEASE_INFO }}"
+        draft: false
+        prerelease: false
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: ${{ env.PACKAGE_ZIP }}
+        asset_name: ${{ env.PACKAGE_ZIP }}
+        asset_content_type: application/zip
+
