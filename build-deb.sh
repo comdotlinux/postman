@@ -112,46 +112,14 @@ if [[ $? -gt 0 ]]; then
 	exit
 fi
 
-#tee release_body.json << END
-#{
-#  "tag_name": "v${version}",
-#  "target_commitish": "master",
-#  "name": "v${version}",
-#  "body": "Postman Debian Package for x86_64 Linux built on Ubuntu",
-#  "draft": false,
-#  "prerelease": false
-#}
-#END
-
-#curl -i -L -H "Authorization: token ${GITHUB_TOKEN}" --data @release_body.json https://api.github.com/repos/comdotlinux/postman/releases 2>&1 | tee /tmp/release
-#location=$(grep Location: /tmp/release | awk '{print $2}')
-#echo "Release : ${location}"
-
-#release_id=$(basename ${location})
-#release_id=${release_id//[$'\t\r\n ']}
-#echo "Release ID : ${release_id}"
-
-#[[ -z release_id ]] && echo "Failed to get release id" && exit 3
 echo "--"
 zip ${packageName}.zip ${packageName}.deb
-
-#uploadUrlZip="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.zip&label=ZippedDebFile"
-#uploadUrl="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb"
-
-#echo "Upload Url is : ${uploadUrl}"
-#curl -i -L -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/vnd.debian.binary-package' --data @${packageName}.deb ${uploadUrl}
-
-#echo "Upload Url for zip is : ${uploadUrlZip}"
-#curl -i -L -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/zip' --data @${packageName}.deb.zip ${uploadUrlZip}
 
 mkdir ${version}
 mv -v ${packageName}.deb ${version}
 echo "::set-env name=PACKAGE_DIR::${version}"
+echo "::set-env name=PACKAGE_ZIP::${version}/${packageName}.zip"
+echo "::set-env name=PACKAGE_VERSION::v${version}"
+echo "::set-env name=RELEASE_INFO::Created from ${postmanTarball}"
 
 echo "--"
-
-#curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version} -o /dev/null
-#if [[ $? -ne 0 ]] ; then
-#	echo "Release v${version}" could not be created. So Job Failed
-#	exit 5
-#fi
