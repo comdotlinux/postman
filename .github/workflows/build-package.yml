@@ -19,3 +19,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       run: chmod u+x ./build-deb.sh && ./build-deb.sh
+#    - name: Upload artifacts
+#      uses: actions/upload-artifact@v1
+#      with:
+#        name: systemcheck-all-${{ env.RELEASE_VERSION }}
+#        path: build/libs
