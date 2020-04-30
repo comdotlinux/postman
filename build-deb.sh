@@ -133,9 +133,7 @@ echo "Release ID : ${release_id}"
 
 [[ -z release_id ]] && echo "Failed to get release id" && exit 3
 echo "--"
-zip ${packageName}.deb.zip ${packageName}.deb
 mkdir ${version}
-mv -v ${packageName}.deb.zip ${version}
 mv -v ${packageName}.deb ${version}
 echo "::set-env name=PACKAGE_DIR::${version}"
 
