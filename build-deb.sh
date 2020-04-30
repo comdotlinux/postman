@@ -122,7 +122,12 @@ echo "Release ID : ${release_id}"
 
 [ -z release_id ] && echo "Failed to get release id" && exit 3
 echo "--"
-#zip ${packageName}.deb.zip ${packageName}.deb
+zip ${packageName}.deb.zip ${packageName}.deb
+mkdir ${release_id}
+mv -v ${packageName}.deb.zip ${release_id}
+mv -v ${packageName}.deb ${release_id}
+echo "::set-env name=PACKAGE_DIR::${release_id}"
+
 #uploadUrlZip="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb.zip&label=ZippedDebFile"
 #uploadUrl="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb"
 
