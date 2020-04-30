@@ -133,9 +133,6 @@ echo "Release ID : ${release_id}"
 
 [[ -z release_id ]] && echo "Failed to get release id" && exit 3
 echo "--"
-mkdir ${version}
-mv -v ${packageName}.deb ${version}
-echo "::set-env name=PACKAGE_DIR::${version}"
 
 uploadUrlZip="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb.zip&label=ZippedDebFile"
 uploadUrl="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb"
@@ -145,9 +142,13 @@ curl -i -L -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: applicati
 
 echo "Upload Url for zip is : ${uploadUrlZip}"
 curl -i -L -H "Authorization: token ${GITHUB_TOKEN}" -H 'Content-Type: application/zip' --data @${packageName}.deb.zip ${uploadUrlZip}
-#
-#
+
+mkdir ${version}
+mv -v ${packageName}.deb ${version}
+echo "::set-env name=PACKAGE_DIR::${version}"
+
 echo "--"
+
 curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version} -o /dev/null
 if [[ $? -ne 0 ]] ; then
 	echo "Release v${version}" could not be created. So Job Failed
