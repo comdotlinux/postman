@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash -x
 
 if [[ -d "Postman" ]]; then
 	echo "Removing old 'Postman/'"
