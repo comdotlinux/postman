@@ -133,8 +133,9 @@ echo "Release ID : ${release_id}"
 
 [[ -z release_id ]] && echo "Failed to get release id" && exit 3
 echo "--"
+zip ${packageName}.zip ${packageName}.deb
 
-uploadUrlZip="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb.zip&label=ZippedDebFile"
+uploadUrlZip="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.zip&label=ZippedDebFile"
 uploadUrl="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb"
 
 echo "Upload Url is : ${uploadUrl}"
