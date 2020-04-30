@@ -118,7 +118,7 @@ zip ${packageName}.zip ${packageName}.deb
 mkdir ${version}
 mv -v ${packageName}.deb ${version}
 echo "::set-env name=PACKAGE_DIR::${version}"
-echo "::set-env name=PACKAGE_ZIP::${version}/${packageName}.zip"
+echo "::set-env name=PACKAGE_ZIP::${packageName}.zip"
 echo "::set-env name=PACKAGE_VERSION::v${version}"
 echo "::set-env name=RELEASE_INFO::Created from ${postmanTarball}"
 
