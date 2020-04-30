@@ -137,7 +137,7 @@ zip ${packageName}.deb.zip ${packageName}.deb
 mkdir ${version}
 mv -v ${packageName}.deb.zip ${version}
 mv -v ${packageName}.deb ${version}
-echo "::set-env name=PACKAGE_DIR::${release_id}"
+echo "::set-env name=PACKAGE_DIR::${version}"
 
 #uploadUrlZip="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb.zip&label=ZippedDebFile"
 #uploadUrl="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb"
