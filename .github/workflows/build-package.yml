@@ -20,7 +20,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
         tag_name: ${{ env.PACKAGE_VERSION }}
-        release_name: Release ${{ github.ref }}
+        release_name: Release ${{ env.PACKAGE_VERSION }}
         body: "Details : ${{ env.RELEASE_INFO }}"
         draft: false
         prerelease: false
