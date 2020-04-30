@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/bash -xe
 
-if [ -d "Postman" ]; then
+if [[ -d "Postman" ]]; then
 	echo "Removing old 'Postman/'"
 	rm -rf "Postman/"
 fi
@@ -15,7 +15,7 @@ version="${versionMaj}.${versionMin}.${versionRev}"
 echo "Postman V${version}"
 
 curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version}
-if [ $? -eq 0 ] ; then
+if [[ $? -eq 0 ]] ; then
 	echo "Release v${version}" exists. Not running.
 	exit 0
 fi
@@ -23,7 +23,7 @@ fi
 packageName="postman-${version}"
 echo "${version}" > ./version.txt
 
-if [ -d "${packageName}" ]; then
+if [[ -d "${packageName}" ]]; then
 	echo "Removing old '${packageName}/'"
 	rm -rf "${packageName}/"
 fi
@@ -87,16 +87,27 @@ END
 
 
 echo "Setting modes"
+chmod 0775 "${packageName}/usr/share/applications/Postman.desktop"
+chmod 0775 "${packageName}/DEBIAN/control"
 chmod 0775 "${packageName}/DEBIAN/postinst"
 chmod 0775 "${packageName}/DEBIAN/prerm"
 
 debName="${packageName}.deb"
+
+echo "Validating modes"
+nc=""
+if [[ $(stat -c "%a" "${packageName}/DEBIAN/control") != "775" ]]; then
+	echo "File modes are invalid, calling 'dpkg-deb' with '--nocheck'"
+	nc="--nocheck"
+else
+	echo "File modes are valid"
+fi
 echo "Building '${packageName}.deb'"
-dpkg-deb -b "${packageName}" > /dev/null
+dpkg-deb $nc -b "${packageName}" > /dev/null
 
 ls -ltra
 
-if [ $? -gt 0 ]; then
+if [[ $? -gt 0 ]]; then
 	echo "Failed to build '${packageName}.deb'"
 	exit
 fi
@@ -120,12 +131,12 @@ release_id=$(basename ${location})
 release_id=${release_id//[$'\t\r\n ']}
 echo "Release ID : ${release_id}"
 
-[ -z release_id ] && echo "Failed to get release id" && exit 3
+[[ -z release_id ]] && echo "Failed to get release id" && exit 3
 echo "--"
 zip ${packageName}.deb.zip ${packageName}.deb
-mkdir ${release_id}
-mv -v ${packageName}.deb.zip ${release_id}
-mv -v ${packageName}.deb ${release_id}
+mkdir ${version}
+mv -v ${packageName}.deb.zip ${version}
+mv -v ${packageName}.deb ${version}
 echo "::set-env name=PACKAGE_DIR::${release_id}"
 
 #uploadUrlZip="https://uploads.github.com/repos/comdotlinux/postman/releases/${release_id}/assets?name=${packageName}.deb.zip&label=ZippedDebFile"
@@ -140,7 +151,7 @@ echo "::set-env name=PACKAGE_DIR::${release_id}"
 #
 echo "--"
 curl -s --fail -L https://api.github.com/repos/comdotlinux/postman/releases/tags/v${version} -o /dev/null
-if [ $? -ne 0 ] ; then
+if [[ $? -ne 0 ]] ; then
 	echo "Release v${version}" could not be created. So Job Failed
 	exit 5
 fi
